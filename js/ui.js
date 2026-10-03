@@ -79,3 +79,38 @@ function loadSample() {
   var data = samplePopulationData();
   for (var i = 0; i < data.length; i++) addRow(data[i][0], data[i][1]);
 }
+
+function uploadCsv() {
+  var input = document.getElementById('csvFile');
+  if (input) input.click();
+}
+
+function importPopulationCsv(text) {
+  var result = parsePopulationCsv(text);
+  if (result.rows.length > 0) {
+    clearRows();
+    for (var i = 0; i < result.rows.length; i++) addRow(result.rows[i][0], result.rows[i][1]);
+  }
+  if (result.errors.length > 0) {
+    showMessages(result.errors, null);
+  } else {
+    showMessages([], result.rows.length + ' baris data berhasil dimuat dari CSV. Periksa tabel lalu klik "Hitung Proyeksi".');
+  }
+  return result;
+}
+
+function handleCsvInput(ev) {
+  var input = (ev && ev.target) ? ev.target : document.getElementById('csvFile');
+  if (!input || !input.files || input.files.length === 0) return;
+  var file = input.files[0];
+  var reader = new FileReader();
+  reader.onload = function (e) {
+    importPopulationCsv(e.target.result);
+    input.value = '';
+  };
+  reader.onerror = function () {
+    showMessages(['Gagal membaca file CSV.'], null);
+    input.value = '';
+  };
+  reader.readAsText(file, 'UTF-8');
+}

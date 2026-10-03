@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const calc = require(path.join(__dirname, '..', 'js', 'calculations.js'));
+const csv = require(path.join(__dirname, '..', 'js', 'csv.js'));
 
 let pass = 0, fail = 0;
 function check(name, cond) {
@@ -147,17 +148,47 @@ check('esc-html', calc.esc('<a href="x">o\'y</a>&') === '&lt;a href=&quot;x&quot
 const sample = calc.samplePopulationData();
 check('sample-14-baris', sample.length === 14 && sample[0][0] === 2010 && sample[0][1] === 220450 && sample[13][0] === 2023);
 
+// --- Parser CSV data historis (js/csv.js) ---
+const csvOk = csv.parsePopulationCsv('2010,220450\n2011,228300\n2012,236500\n');
+check('csv-rows', csvOk.count === 3 && csvOk.rows.length === 3 && csvOk.rows[0][0] === '2010' && csvOk.rows[0][1] === '220450');
+check('csv-tanpa-error', csvOk.errors.length === 0);
+const csvBomCrlf = csv.parsePopulationCsv('\uFEFF2010,220450\r\n2011,228300\r\n');
+check('csv-bom-crlf', csvBomCrlf.rows.length === 2 && csvBomCrlf.rows[1][0] === '2011' && csvBomCrlf.errors.length === 0);
+const csvSpaces = csv.parsePopulationCsv('  2010 , 220450 \n2011,228300');
+check('csv-trim-spasi', csvSpaces.rows[0][0] === '2010' && csvSpaces.rows[0][1] === '220450');
+const csvQuoted = csv.parsePopulationCsv('"2010","220450"\n2011,228300');
+check('csv-field-kutip', csvQuoted.rows.length === 2 && csvQuoted.rows[0][1] === '220450' && csvQuoted.errors.length === 0);
+const csvBlank = csv.parsePopulationCsv('\n2010,220450\n\n   \n2011,228300\n');
+check('csv-baris-kosong', csvBlank.rows.length === 2 && csvBlank.errors.length === 0);
+const csvBadCols = csv.parsePopulationCsv('2010,220450\n2011,228300,extra\n2012,236500');
+check('csv-kolom-salah-ditolak', csvBadCols.rows.length === 2 && csvBadCols.errors.length === 1);
+check('csv-pesan-nomor-baris', csvBadCols.errors[0] === 'Baris 2: format harus "Tahun,Jumlah Penduduk".');
+const csvNoComma = csv.parsePopulationCsv('2010;220450\n2011;228300');
+check('csv-tanpa-koma-ditolak', csvNoComma.rows.length === 0 && csvNoComma.errors.length === 2);
+const csvEmpty = csv.parsePopulationCsv('   \n\n');
+check('csv-file-kosong', csvEmpty.rows.length === 0 && csvEmpty.errors.length === 1 && csvEmpty.errors[0] === 'File CSV tidak berisi data.');
+const csvNull = csv.parsePopulationCsv(null);
+check('csv-non-string-ditolak', csvNull.rows.length === 0 && csvNull.errors.length === 1);
+check('csv-feed-validasi', calc.validateProjectionInput({
+  projStart: 2024, projEnd: 2045, projInterval: 5,
+  years: csvOk.rows.map(function (r) { return r[0]; }),
+  populations: csvOk.rows.map(function (r) { return r[1]; })
+}).data.length === 3);
+
 // --- calculations.js murni tanpa DOM ---
 const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'calculations.js'), 'utf8');
 check('tanpa-dom', src.indexOf('document') === -1 && src.indexOf('window') === -1);
 check('guard-module-exports', /typeof module\s*!==\s*'undefined'/.test(src));
+const csvSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'csv.js'), 'utf8');
+check('csv-tanpa-dom', csvSrc.indexOf('document') === -1 && csvSrc.indexOf('window') === -1);
+check('csv-guard-module-exports', /typeof module\s*!==\s*'undefined'/.test(csvSrc));
 
 // --- index.html statis: aset relatif, tanpa referensi PHP ---
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 check('tanpa-referensi-php', html.indexOf('.php') === -1);
 const needIds = ['dataBody', 'mainForm', 'projStart', 'projEnd', 'projInterval', 'results', 'formMessages'];
 check('id-stabil', needIds.every(function (id) { return html.indexOf('id="' + id + '"') !== -1; }));
-const needScripts = ['js/calculations.js', 'js/ui.js', 'js/projection.js', 'js/app.js'];
+const needScripts = ['js/calculations.js', 'js/csv.js', 'js/ui.js', 'js/projection.js', 'js/app.js'];
 check('script-relatif-ada', needScripts.every(function (p) {
   return html.indexOf(p) !== -1 && fs.existsSync(path.join(__dirname, '..', p));
 }));

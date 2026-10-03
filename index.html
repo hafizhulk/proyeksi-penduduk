@@ -29,9 +29,11 @@
     <div class="btn-row">
       <button type="button" class="btn btn-success" onclick="addRow()">Tambah Baris</button>
       <button type="button" class="btn btn-secondary" onclick="loadSample()">Load Contoh Data</button>
+      <button type="button" class="btn btn-secondary" onclick="uploadCsv()">Upload CSV</button>
       <button type="button" class="btn btn-secondary" onclick="clearRows()">Hapus Semua</button>
     </div>
-    <div class="info-box"><strong>Tips:</strong> Minimal 5 data dengan tahun berbeda (tidak harus berurutan tiap tahun). Semakin banyak data historis, semakin stabil validasi.</div>
+    <input id="csvFile" type="file" accept=".csv,text/csv" hidden onchange="handleCsvInput(event)">
+    <div class="info-box"><strong>Tips:</strong> Minimal 5 data dengan tahun berbeda (tidak harus berurutan tiap tahun). Semakin banyak data historis, semakin stabil validasi. Anda juga dapat mengisi tabel lewat <strong>Upload CSV</strong> — setiap baris berformat <code>Tahun,Jumlah Penduduk</code> (tanpa header, tanpa pemisah ribuan).</div>
   </div>
 
   <div class="card">
@@ -57,6 +59,7 @@
 
 </div>
 <script src="js/calculations.js"></script>
+<script src="js/csv.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/projection.js"></script>
 <script src="js/app.js"></script>

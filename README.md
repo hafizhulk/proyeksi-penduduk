@@ -9,6 +9,7 @@ Coba aplikasinya di: **https://play.reloop.id/proyeksi-penduduk**
 ## Fitur
 
 - Input data historis tahun & jumlah penduduk (minimal 5 data, tahun unik).
+- Isi data historis secara manual atau **unggah file CSV** (format `Tahun,Jumlah Penduduk` per baris).
 - Tiga model proyeksi:
   - **Aritmatik** — regresi linier pada jumlah penduduk.
   - **Geometrik** — laju pertumbuhan dari geometric mean (dihitung dalam skala log agar stabil).
@@ -27,7 +28,8 @@ Coba aplikasinya di: **https://play.reloop.id/proyeksi-penduduk**
 │   └── style.css            # Gaya tampilan
 ├── js/
 │   ├── calculations.js      # Perhitungan murni tanpa DOM (port 1:1 logika PHP)
-│   ├── ui.js                # Helper DOM + baris form dinamis
+│   ├── csv.js               # Parser CSV data historis (murni tanpa DOM)
+│   ├── ui.js                # Helper DOM + baris form dinamis + upload CSV
 │   ├── projection.js        # Baca form, validasi, render hasil, grafik, CSV
 │   └── app.js               # Init
 └── tests/
@@ -50,6 +52,18 @@ python3 -m http.server 8000
 1. Push folder ini ke repositori Git.
 2. Di Cloudflare Pages: **Create Project → Connect to Git**, tanpa build command dan tanpa output directory khusus (root).
 3. Deploy — `index.html` di root otomatis menjadi halaman utama.
+
+## Format CSV Data Historis
+
+Tombol **Upload CSV** mengisi tabel data historis. Setiap baris berisi `Tahun,Jumlah Penduduk` — tanpa baris header, tanpa pemisah ribuan, dipisahkan koma:
+
+```csv
+2010,220450
+2011,228300
+2012,236500
+```
+
+Baris kosong diabaikan; BOM serta akhir baris CRLF/LF ditangani otomatis. Baris dengan jumlah kolom selain dua dilaporkan sebagai `Baris N: format harus "Tahun,Jumlah Penduduk".` dan validasi nilai tahun/penduduk tetap memakai aturan yang sama seperti input manual.
 
 ## Pengujian
 
