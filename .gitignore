@@ -1,0 +1,18 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Log & cache
+*.log
+*.cache
+
+# Environment lokal
+.env
+.env.*
+
+# Dependency (jika ditambahkan nanti)
+/vendor/
+/node_modules/
