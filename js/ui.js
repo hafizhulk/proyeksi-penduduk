@@ -80,11 +80,6 @@ function loadSample() {
   for (var i = 0; i < data.length; i++) addRow(data[i][0], data[i][1]);
 }
 
-function uploadCsv() {
-  var input = document.getElementById('csvFile');
-  if (input) input.click();
-}
-
 function importPopulationCsv(text) {
   var result = parsePopulationCsv(text);
   if (result.rows.length > 0) {

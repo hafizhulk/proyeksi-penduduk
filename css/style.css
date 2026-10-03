@@ -28,7 +28,9 @@ input[type=number]:focus-visible,button:focus-visible{outline:2px solid var(--ac
 .btn-danger{background:var(--danger);color:#fff;font-size:.78rem;padding:5px 10px}.btn-danger:hover{background:#A93535}
 .btn-secondary{background:#64748B;color:#fff}.btn-secondary:hover{background:#4C5E77}
 .btn-warning{background:var(--expo);color:#fff}.btn-warning:hover{background:#93500A}
-.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+label.btn{margin-bottom:0}
+.file-input-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 table{width:100%;border-collapse:collapse;font-size:.86rem}
 thead tr{background:#F1F4F8;position:sticky;top:0}
 th{padding:9px 11px;text-align:left;font-weight:700;color:var(--ink);border-bottom:2px solid var(--border);white-space:nowrap}
