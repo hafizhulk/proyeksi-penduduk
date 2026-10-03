@@ -2,6 +2,10 @@
 
 Aplikasi web sederhana (PHP) untuk **simulasi proyeksi pertumbuhan penduduk** menggunakan tiga metode: **Aritmatik**, **Geometrik**, dan **Eksponensial**. Metode terbaik dipilih otomatis berdasarkan RMSE dari validasi deret waktu (rolling validation).
 
+## 🔗 Demo Langsung
+
+Coba aplikasinya di: **https://play.reloop.id/proyeksi-penduduk**
+
 ## Fitur
 
 - Input data historis tahun & jumlah penduduk (minimal 5 data, tahun unik).
