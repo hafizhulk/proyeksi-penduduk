@@ -1,6 +1,6 @@
 # Proyeksi Pertumbuhan Penduduk
 
-Aplikasi web sederhana (PHP) untuk **simulasi proyeksi pertumbuhan penduduk** menggunakan tiga metode: **Aritmatik**, **Geometrik**, dan **Eksponensial**. Metode terbaik dipilih otomatis berdasarkan RMSE dari validasi deret waktu (rolling validation).
+Aplikasi web statis (tanpa PHP, tanpa build step) untuk **simulasi proyeksi pertumbuhan penduduk** menggunakan tiga metode: **Aritmatik**, **Geometrik**, dan **Eksponensial**. Metode terbaik dipilih otomatis berdasarkan RMSE dari validasi deret waktu (rolling validation).
 
 ## 🔗 Demo Langsung
 
@@ -16,48 +16,47 @@ Coba aplikasinya di: **https://play.reloop.id/proyeksi-penduduk**
 - Validasi deret waktu (rolling validation) + pemilihan metode terbaik via RMSE.
 - Metrik kelayakan model: RMSE, MAE, R², dan korelasi Pearson.
 - Grafik interaktif (Chart.js) dan tabel hasil proyeksi.
-- Berjalan di **PHP 7.0+** tanpa framework/dependensi server.
+- 100% statis: tidak ada server, framework, dependensi, atau build step.
 
 ## Struktur Proyek
 
 ```
 .
-├── index.php              # Controller tipis (entry point)
-├── calculations.php       # Shims kompatibilitas mundur
-├── assets/
-│   ├── styles.css         # Gaya tampilan
-│   └── app.js             # Grafik & interaksi klien
-├── src/
-│   ├── Support.php        # Batas angka & parsing input
-│   ├── Format.php         # Format angka/teks & escaping
-│   ├── Statistics.php     # Korelasi, regresi, RMSE/MAE/R²
-│   ├── Projection.php     # Model & proyeksi populasi
-│   ├── InputValidation.php# Validasi input form
-│   └── SampleData.php     # Data contoh bawaan
-├── templates/
-│   ├── head.php
-│   ├── form.php
-│   ├── results.php
-│   └── foot.php
+├── index.html               # Entry point (form + wadah hasil)
+├── css/
+│   └── style.css            # Gaya tampilan
+├── js/
+│   ├── calculations.js      # Perhitungan murni tanpa DOM (port 1:1 logika PHP)
+│   ├── ui.js                # Helper DOM + baris form dinamis
+│   ├── projection.js        # Baca form, validasi, render hasil, grafik, CSV
+│   └── app.js               # Init
 └── tests/
-    └── test_projection.php# Uji cepat tanpa framework
+    └── projection.test.js   # Uji Node tanpa dependensi
 ```
 
 ## Menjalankan
 
-Perlu PHP 7.0 atau lebih baru.
+Tidak perlu PHP. Cukup sajikan folder ini sebagai situs statis dan buka `index.html`:
 
 ```bash
-# Server pengembangan bawaan PHP
-php -S localhost:8000
+# Server statis apa saja, contoh:
+python3 -m http.server 8000
 
 # Buka http://localhost:8000 di peramban
 ```
 
+### Deploy ke Cloudflare Pages
+
+1. Push folder ini ke repositori Git.
+2. Di Cloudflare Pages: **Create Project → Connect to Git**, tanpa build command dan tanpa output directory khusus (root).
+3. Deploy — `index.html` di root otomatis menjadi halaman utama.
+
 ## Pengujian
 
+Butuh Node.js (tanpa `npm install` apa pun):
+
 ```bash
-php tests/test_projection.php
+node tests/projection.test.js
 ```
 
 ## Lisensi
